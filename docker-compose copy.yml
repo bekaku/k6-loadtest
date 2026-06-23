@@ -1,0 +1,15 @@
+# version: '3.8'
+name: k6-loadtest
+services:
+  k6:
+    image: grafana/k6:latest
+    container_name: k6-loadtest
+    ports:
+      - "5665:5665" # Expose พอร์ตสำหรับดู Web Dashboard
+    environment:
+      - K6_WEB_DASHBOARD=true          # เปิดใช้งาน Dashboard
+      - K6_WEB_DASHBOARD_HOST=0.0.0.0  # ให้เข้าถึงได้จากนอก Docker
+    volumes:
+      - ./scripts:/scripts
+    # command: run /scripts/loadtest.js
+    command: run /scripts/loadtest.js --out web-dashboard=export=/scripts/report.html

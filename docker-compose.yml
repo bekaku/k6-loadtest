@@ -1,0 +1,29 @@
+services:
+  # 1. Database สำหรับเก็บข้อมูลดิบที่ k6 ส่งมา
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=k6
+
+  # 2. หน้าจอ Dashboard สวยๆ ที่ดึงข้อมูลจาก InfluxDB (เปิดค้างไว้ตลอดไป)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - influxdb
+
+  # 3. ตัวรัน Load Test (รันเสร็จแล้วดับได้เลย ข้อมูลไม่หาย)
+  k6:
+    image: grafana/k6:latest
+    container_name: k6-loadtest
+    volumes:
+      - ./scripts:/scripts
+    depends_on:
+      - influxdb
+    # สั่งให้ k6 ส่งผลลัพธ์ (metrics) ไปที่ InfluxDB container
+    command: run /scripts/loadtest.js --out influxdb=http://influxdb:8086/k6
