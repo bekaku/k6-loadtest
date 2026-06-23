@@ -11,5 +11,4 @@ services:
       - K6_WEB_DASHBOARD_HOST=0.0.0.0  # ให้เข้าถึงได้จากนอก Docker
     volumes:
       - ./scripts:/scripts
-    # command: run /scripts/loadtest.js
-    command: run /scripts/loadtest.js --out web-dashboard=export=/scripts/report.html
+    command: run /scripts/loadtest.js
